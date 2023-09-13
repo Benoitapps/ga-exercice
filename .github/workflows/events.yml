@@ -1,23 +1,41 @@
 name: Events exercices
 
-on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: 'dev'
-        required: true
-        default: 'dev' 
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       branch:
+#         description: 'dev'
+#         required: true
+#         default: 'dev' 
 
+
+# jobs:
+#   print-event:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Print the event that triggered this workflow
+#         run: |
+#           echo ${{ github.event_name }}
+
+#       - name: Print the current time
+#         run: |
+#           echo $(date)
+
+on:
+  push:
+    branches:
+      - dev
 
 jobs:
-  print-event:
+  check-branch-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print the event that triggered this workflow
+      - name: Vérifier la branche
         run: |
-          echo ${{ github.event_name }}
-
-      - name: Print the current time
-        run: |
-          echo $(date)
+          BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f3)
+          if [ "$BRANCH_NAME" != "dev" ]; then
+            echo "Push non autorisé sur cette branche."
+            exit 1
+          fi
